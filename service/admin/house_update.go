@@ -11,6 +11,7 @@ import (
 )
 
 type HouseUpdateInput struct {
+	Id           string        `json:"id"`           //主键ID
 	Address      string        `json:"address"`      //地址
 	CityEnName   string        `json:"cityEnName"`   //城市英文简称
 	RegionEnName string        `json:"regionEnName"` //区县英文简称
@@ -25,7 +26,7 @@ type HouseUpdateInput struct {
 	Tags         []string      `json:"tags"`         //标签
 	Description  string        `json:"description"`  //描述
 	Pictures     []PicturePath `json:"pictures"`     //图片集合
-	Id           string        `json:"id"`           //主键ID
+
 }
 
 //修改房源信息
@@ -80,7 +81,7 @@ func HouseUpdate(c *gin.Context) {
 	//6 获取照片信息 添加到数据库
 	if len(input.Pictures) > 0 {
 		pics := make([]models.HousePicture, len(input.Pictures))
-		for k, _ := range input.Pictures {
+		for k := range input.Pictures {
 			pics[k].HouseId = uint(houseId)
 			pics[k].CdnPrefix = "http://localhost/"
 			pics[k].Path = input.Pictures[k].Path
@@ -94,7 +95,7 @@ func HouseUpdate(c *gin.Context) {
 	//获取标签信息   保存标签到数据库
 	if len(input.Tags) > 0 {
 		tags := make([]models.HouseTag, len(input.Tags))
-		for k, _ := range input.Tags {
+		for k := range input.Tags {
 			tags[k].HouseId = uint(houseId)
 			tags[k].Name = input.Tags[k]
 		}

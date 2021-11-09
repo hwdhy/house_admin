@@ -23,7 +23,7 @@ func HouseStarList(c *gin.Context) {
 
 	starCreateMap := make(map[uint]time.Time)
 	houseIds := make([]uint, len(houseStars))
-	for k, _ := range houseStars {
+	for k := range houseStars {
 		houseIds[k] = houseStars[k].HouseId
 		starCreateMap[houseStars[k].HouseId] = houseStars[k].CreateTime
 	}
@@ -33,8 +33,8 @@ func HouseStarList(c *gin.Context) {
 	db.DB.Debug().Model(models.House{}).Where("id in (?)", houseIds).Find(&houseList)
 
 	//收藏时间加入返回记录
-	for k, _ := range houseList {
-		houseList[k].CreateTime = starCreateMap[houseList[k].ID]
+	for k := range houseList {
+		houseList[k].CreatedAt = starCreateMap[houseList[k].ID]
 	}
 
 	c.JSON(http.StatusOK, gin.H{

@@ -77,7 +77,7 @@ func HouseHouses(c *gin.Context) {
 		sort := strings.ToLower(input.SortDirection)
 		switch input.OrderBy {
 		case "lastUpdateTime":
-			tx.Order("last_update_time " + sort)
+			tx.Order("updated_at " + sort)
 		case "price":
 			tx.Order("price " + sort)
 		case "area":
