@@ -1,14 +1,18 @@
 package admin
 
 import (
+	"crypto/sha1"
+	"fmt"
 	"gin_test/conf"
+	"gin_test/db"
+	"gin_test/models"
+	utilsFile "gin_test/utils/file"
 	utilsToken "gin_test/utils/token"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"path/filepath"
-	"strings"
 )
 
 type UploadPhotoOutput struct {
@@ -18,7 +22,7 @@ type UploadPhotoOutput struct {
 	CdnPrefix string `json:"cdnPrefix"` //图片CDN
 }
 
-//上传图片
+//用户上传图片
 func UploadPhoto(c *gin.Context) {
 	userId := utilsToken.GetContextUserId(c)
 	if userId == 0 {
@@ -26,27 +30,63 @@ func UploadPhoto(c *gin.Context) {
 		return
 	}
 
-	file, err := c.FormFile("file")
+	//获取表单文件流
+	files, err := c.FormFile("file")
 	if err != nil {
 		log.Println("formFile err:", err)
 		return
 	}
-	size := file.Size
-	uuidStr := strings.ReplaceAll(uuid.NewString(), "-", "")
-	ext := filepath.Ext(file.Filename)
-	filePath := conf.UploadFilePath + uuidStr + ext
+	size := files.Size
+	ext := filepath.Ext(files.Filename)
 
-	err = c.SaveUploadedFile(file, filePath)
+	//打开表单文件流  获取file类型文件
+	file, err := files.Open()
+	if err != nil {
+		return
+	}
+
+	//读取文件流
+	all, err := ioutil.ReadAll(file)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	//文件在数据库是否存在是否存在
+	hash := sha1.New()
+	hash.Write(all)
+	fileHashName := fmt.Sprintf("%x", hash.Sum(nil))
+
+	//判断hashName是否存在
+	var picture models.HousePicture
+	db.DB.Model(models.HousePicture{}).Where("location = ?", fileHashName).First(&picture)
+	if picture.ID != 0 {
+		c.JSON(http.StatusOK, UploadPhotoOutput{
+			Size:      size,                              //图片大小
+			Key:       fileHashName + ext,                //文件名 + 文件后缀
+			Url:       conf.CdnPath + fileHashName + ext, //文件全路径
+			CdnPrefix: conf.CdnPath,                      //CDN
+		})
+	}
+	//判断路径是否存在
+	utilsFile.FileCreatePath(conf.UploadFilePath)
+
+	fileName := conf.UploadFilePath + fileHashName + ext
+
+	//文件上传
+	err = c.SaveUploadedFile(files, fileName)
 	if err != nil {
 		log.Println("upload File err:", err)
 		c.JSON(http.StatusInternalServerError, nil)
 		return
 	}
 
+	_, _ = utilsFile.ImagesResize(fileName, []string{"370x270", "140x90"})
+
 	c.JSON(http.StatusOK, UploadPhotoOutput{
-		Size:      size,
-		Key:       uuidStr + ext,
-		Url:       conf.CdnPath + uuidStr + ext,
-		CdnPrefix: conf.CdnPath,
+		Size:      size,                              //图片大小
+		Key:       fileHashName + ext,                //文件名 + 文件后缀
+		Url:       conf.CdnPath + fileHashName + ext, //文件全路径
+		CdnPrefix: conf.CdnPath,                      //CDN
 	})
 }

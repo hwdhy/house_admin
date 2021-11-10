@@ -5,7 +5,8 @@ go 1.17
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.7.4
-	github.com/google/uuid v1.3.0
+	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
+	golang.org/x/image v0.0.0-20211028202545-6944b10bf410
 	gorm.io/driver/postgres v1.2.1
 	gorm.io/gorm v1.22.2
 )

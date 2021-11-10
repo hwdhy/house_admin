@@ -60,7 +60,7 @@ func HouseSubscribes(c *gin.Context) {
 		//获取所有预约的房源ID和用户ID
 		var houseIds []uint
 		userIds := []uint{userId}
-		for k, _ := range subscribes {
+		for k := range subscribes {
 			houseIds = append(houseIds, subscribes[k].HouseId)
 			userIds = append(userIds, subscribes[k].AdminId)
 		}
@@ -70,7 +70,7 @@ func HouseSubscribes(c *gin.Context) {
 
 		//封装房源消息到map中
 		houseMap := make(map[uint]models.House, len(houseList))
-		for k, _ := range houseList {
+		for k := range houseList {
 			houseMap[houseList[k].ID] = houseList[k]
 		}
 
@@ -79,11 +79,11 @@ func HouseSubscribes(c *gin.Context) {
 		db.DB.Model(models.User{}).Debug().Where("id in (?)", userIds).Find(&userList)
 
 		userMap := make(map[uint]models.User, len(userList))
-		for k, _ := range userList {
+		for k := range userList {
 			userMap[userList[k].Id] = userList[k]
 		}
 
-		for k, _ := range subscribes {
+		for k := range subscribes {
 			list[k].HouseSubscribe = subscribes[k]
 			list[k].House = houseMap[subscribes[k].HouseId]
 			list[k].User = userMap[subscribes[k].UserId]
