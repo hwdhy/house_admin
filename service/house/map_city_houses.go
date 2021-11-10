@@ -105,29 +105,32 @@ func MapCityHouses(c *gin.Context) {
 	}
 
 	if input.Bounds.LeftTopLatitude != 0 {
-		//通过经纬度查询区域内县区   ba_area
-		var areaNameList []string
-		db.DB.Model(models.BsArea{}).
-			Where("lng >= ? and  lng <= ?", input.Bounds.LeftTopLongitude, input.Bounds.RightBottomLongitude).
-			Where("lat >= ? and lat <= ?", input.Bounds.RightBottomLatitude, input.Bounds.LeftTopLatitude).
-			Pluck("area_name", &areaNameList)
+		////通过经纬度查询区域内县区   ba_area
+		//var areaNameList []string
+		//db.DB.Model(models.BsArea{}).Debug().
+		//	Where("lng >= ? and  lng <= ?", input.Bounds.LeftTopLongitude, input.Bounds.RightBottomLongitude).
+		//	Where("lat >= ? and lat <= ?", input.Bounds.RightBottomLatitude, input.Bounds.LeftTopLatitude).
+		//	Pluck("area_name", &areaNameList)
 
-		if len(areaNameList) > 0 {
-			//通过区域名称查询 区域内房源ID support_address
-			var enName []string
-			db.DB.Model(models.SupportAddress{}).Where("cn_name in ?", areaNameList).Pluck("en_name", &enName)
+		//if len(areaNameList) > 0 {
+		//通过区域名称查询 区域内房源ID support_address
+		var enName []string
+		db.DB.Model(models.SupportAddress{}).
+			Where("baidu_map_lng >= ? and  baidu_map_lng <= ?", input.Bounds.LeftTopLongitude, input.Bounds.RightBottomLongitude).
+			Where("baidu_map_lat >= ? and baidu_map_lat <= ?", input.Bounds.RightBottomLatitude, input.Bounds.LeftTopLatitude).
+			Pluck("en_name", &enName)
 
-			if len(enName) > 0 {
-				var houseIds []uint
-				db.DB.Model(models.House{}).Where("region_en_name in ?", enName).Pluck("id", &houseIds)
+		if len(enName) > 0 {
+			var houseIds []uint
+			db.DB.Model(models.House{}).Where("region_en_name in ?", enName).Pluck("id", &houseIds)
 
-				tx.Where("id in ?", houseIds)
-			} else {
-				tx.Where("id = 0")
-			}
+			tx.Where("id in ?", houseIds)
 		} else {
 			tx.Where("id = 0")
 		}
+		//} else {
+		//	tx.Where("id = 0")
+		//}
 	}
 
 	//查询状态为 审核通过类型的房源

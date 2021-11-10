@@ -2,6 +2,7 @@ package admin
 
 import (
 	"fmt"
+	"gin_test/conf"
 	"gin_test/db"
 	"gin_test/models"
 	"gin_test/utils/basic"
@@ -59,7 +60,7 @@ func HouseAdd(c *gin.Context) {
 		Area:         area,
 		Price:        price,
 		Title:        input.Title,
-		Cover:        "http://localhost/" + input.Cover,
+		Cover:        conf.CdnPath + input.Cover,
 		Status:       1, //默认审核通过
 		AdminId:      userID,
 	}
@@ -78,9 +79,9 @@ func HouseAdd(c *gin.Context) {
 	//6 保存房屋图片消息
 	if len(input.Pictures) > 0 {
 		pics := make([]models.HousePicture, len(input.Pictures))
-		for k, _ := range input.Pictures {
+		for k := range input.Pictures {
 			pics[k].HouseId = house.ID
-			pics[k].CdnPrefix = "http://localhost/"
+			pics[k].CdnPrefix = conf.CdnPath
 			pics[k].Path = input.Pictures[k].Path
 		}
 
@@ -90,7 +91,7 @@ func HouseAdd(c *gin.Context) {
 	//7 保存房屋标签消息
 	if len(input.Tags) > 0 {
 		tags := make([]models.HouseTag, len(input.Tags))
-		for k, _ := range input.Tags {
+		for k := range input.Tags {
 			tags[k].HouseId = house.ID
 			tags[k].Name = input.Tags[k]
 		}

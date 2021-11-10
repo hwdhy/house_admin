@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"gin_test/conf"
 	utilsToken "gin_test/utils/token"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -33,7 +34,7 @@ func UploadPhoto(c *gin.Context) {
 	size := file.Size
 	uuidStr := strings.ReplaceAll(uuid.NewString(), "-", "")
 	ext := filepath.Ext(file.Filename)
-	filePath := "D:/image/" + uuidStr + ext
+	filePath := conf.UploadFilePath + uuidStr + ext
 
 	err = c.SaveUploadedFile(file, filePath)
 	if err != nil {
@@ -45,7 +46,7 @@ func UploadPhoto(c *gin.Context) {
 	c.JSON(http.StatusOK, UploadPhotoOutput{
 		Size:      size,
 		Key:       uuidStr + ext,
-		Url:       "http://localhost/" + uuidStr + ext,
-		CdnPrefix: "http://localhost/",
+		Url:       conf.CdnPath + uuidStr + ext,
+		CdnPrefix: conf.CdnPath,
 	})
 }

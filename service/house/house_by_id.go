@@ -31,19 +31,19 @@ func HousesById(c *gin.Context) {
 	houseId := basic.StringToInt(c.Param("houseId"))
 
 	var house models.House
-	db.DB.Model(models.House{}).Where("id = ?", houseId).First(&house)
+	db.DB.Model(models.House{}).Debug().Where("id = ?", houseId).First(&house)
 
 	var houseDetail models.HouseDetail
-	db.DB.Model(models.HouseDetail{}).Where("house_id = ?", houseId).First(&houseDetail)
+	db.DB.Model(models.HouseDetail{}).Debug().Where("house_id = ?", houseId).First(&houseDetail)
 
 	var tags []string
-	db.DB.Model(models.HouseTag{}).Where("house_id = ?", houseId).Pluck("name", &tags)
+	db.DB.Model(models.HouseTag{}).Debug().Where("house_id = ?", houseId).Pluck("name", &tags)
 
 	var pictures []models.HousePicture
-	db.DB.Model(models.HousePicture{}).Where("house_id = ?", houseId).Find(&pictures)
+	db.DB.Model(models.HousePicture{}).Debug().Where("house_id = ?", houseId).Find(&pictures)
 
 	var suggestHouses []models.House
-	db.DB.Debug().Model(models.House{}).Order("rand()").Limit(3).Find(&suggestHouses)
+	db.DB.Debug().Model(models.House{}).Debug().Order("random()").Limit(3).Find(&suggestHouses)
 
 	userID := utilsToken.GetContextUserId(c)
 
@@ -71,7 +71,7 @@ func HousesById(c *gin.Context) {
 		reserve = false
 	} else {
 		var houseReserve models.HouseSubscribe
-		db.DB.Model(models.HouseSubscribe{}).Where("house_id = ?", houseId).Where("user_id = ?", userID).First(&houseReserve)
+		db.DB.Model(models.HouseSubscribe{}).Debug().Where("house_id = ?", houseId).Where("user_id = ?", userID).First(&houseReserve)
 		if houseReserve.Id == 0 {
 			reserve = false
 		} else {
@@ -85,7 +85,7 @@ func HousesById(c *gin.Context) {
 
 	//查看当前房源收藏数量
 	var Count int64
-	db.DB.Model(models.HouseStar{}).Debug().Where("house_id = ?", houseId).Count(&Count)
+	db.DB.Model(models.HouseStar{}).Debug().Where("house_id = ?", houseId).Debug().Count(&Count)
 
 	c.JSON(http.StatusOK, gin.H{
 		"code": http.StatusOK,

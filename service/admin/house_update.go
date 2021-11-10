@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"gin_test/conf"
 	"gin_test/db"
 	"gin_test/models"
 	"gin_test/utils/basic"
@@ -64,7 +65,7 @@ func HouseUpdate(c *gin.Context) {
 			"area":           input.Area,
 			"price":          input.Price,
 			"title":          input.Title,
-			"cover":          "http://localhost/" + input.Cover,
+			"cover":          conf.CdnPath + input.Cover,
 			"status":         1,
 		})
 
@@ -83,7 +84,7 @@ func HouseUpdate(c *gin.Context) {
 		pics := make([]models.HousePicture, len(input.Pictures))
 		for k := range input.Pictures {
 			pics[k].HouseId = uint(houseId)
-			pics[k].CdnPrefix = "http://localhost/"
+			pics[k].CdnPrefix = conf.CdnPath
 			pics[k].Path = input.Pictures[k].Path
 		}
 		db.DB.Model(models.HousePicture{}).Create(&pics)

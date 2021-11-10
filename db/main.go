@@ -2,7 +2,7 @@ package db
 
 import (
 	"gin_test/models"
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
 )
@@ -10,10 +10,12 @@ import (
 var DB *gorm.DB
 
 func InitDatabase() {
-	dsn := "root:dhyy@tcp(127.0.0.1:3306)/test?charset=utf8mb4&parseTime=True&loc=Local"
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	//连接数据库175.27.224.55
+	dsn := "host=localhost user=postgres password=123456 dbname=changfang port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+
 	if err != nil {
-		panic(db.Error)
+		panic("failed to connect database")
 	}
 
 	RegisterTable(db)

@@ -1,6 +1,9 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+	"time"
+)
 
 // House 房源基本信息
 type House struct {
@@ -17,7 +20,11 @@ type House struct {
 	Status     int  `json:"status"`     //房源状态 （0：未审核  1：审核通过  2：已出租   3；已删除）
 	AdminId    uint `json:"adminId"`    //所属管理员ID
 	WatchTimes int  `json:"WatchTimes"` //被查看次数
-	gorm.Model
+
+	ID        uint           `json:"id"`
+	CreatedAt time.Time      `json:"createdAt"`
+	UpdatedAt time.Time      `json:"updatedAt"`
+	DeletedAt gorm.DeletedAt `json:"deletedAt"`
 }
 
 func (House) TableName() string {
