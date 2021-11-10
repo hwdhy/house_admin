@@ -22,9 +22,9 @@ type House struct {
 	WatchTimes int  `json:"WatchTimes"` //被查看次数
 
 	ID        uint           `json:"id"`
-	CreatedAt time.Time      `json:"createdAt"`
-	UpdatedAt time.Time      `json:"updatedAt"`
-	DeletedAt gorm.DeletedAt `json:"deletedAt"`
+	CreatedAt time.Time      `json:"CreatedAt"`
+	UpdatedAt time.Time      `json:"UpdatedAt"`
+	DeletedAt gorm.DeletedAt `json:"DeletedAt"`
 }
 
 func (House) TableName() string {
