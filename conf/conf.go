@@ -1,9 +1,9 @@
 package conf
 
-//服务器
+// 服务器
 const (
 	UploadFilePath = "/var/"
-	CdnPath        = "http://1.117.251.63/hwdhy/"
+	CdnPath        = "http://127.0.0.1/hwdhy/"
 )
 
 ////本地
