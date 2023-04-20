@@ -2,7 +2,7 @@ package conf
 
 // 服务器
 const (
-	UploadFilePath = "/var/"
+	UploadFilePath = "/var/hwdhy/"
 	CdnPath        = "http://127.0.0.1/hwdhy/"
 )
 
